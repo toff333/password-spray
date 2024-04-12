@@ -29,7 +29,7 @@ foreach ($user in $userList) {
         }
         else {
             $output = "Success"
-            $message = "[*] Successfully authenticated user:$user with domain $CurrentDomain using password:$password"
+            $message = "[*] Successfully authenticated user:$user using password:$password"
             Write-Host $message -ForegroundColor Green
             # If authenticated, no need to continue with other passwords
             break
