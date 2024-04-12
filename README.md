@@ -1,36 +1,32 @@
 # Password Spraying PowerShell Script
 
-This PowerShell script allows you to perform password spraying against a domain using a list of usernames and a single password. It checks each username with the provided password and exports the results to a CSV file.
-
-## Prerequisites
-- Windows PowerShell
-- Access to the domain for authentication
+This PowerShell script enables password spraying attacks by attempting to authenticate a list of users using a list of passwords against a specified domain. It's a tool commonly used in penetration testing and security assessments to identify weak passwords and potential vulnerabilities in authentication systems.
 
 ## Usage
 
-1. **Download the Script**: Download the `password_spray.ps1` script from this repository.
+1. **Prepare User and Password Lists**: Prepare your user list and password list. Each should be a text file containing one entry per line. These files will be used as inputs for the script.
 
-2. **Prepare Usernames List**: Create a text file containing the list of usernames you want to test. Each username should be on a separate line. Save this file as `usernames.txt`.
+2. **Run the Script**: Execute the script with PowerShell, providing the paths to your user list, password list, and the desired output CSV file. Use the following command format:
 
-3. **Run the Script**:
-   - Open PowerShell.
-   - Navigate to the directory where the script is located.
-   - Run the script using the following command:
-     ```powershell
-     .\password_spray.ps1 -ul "usernames.txt" -p "yourpassword" -o "output.csv"
-     ```
-     - Replace `"usernames.txt"` with the path to your usernames list file.
-     - Replace `"yourpassword"` with the password you want to test.
-     - Replace `"output.csv"` with the desired path for the output CSV file.
+   ```powershell
+   .\PasswordSpray.ps1 -UserListPath <path_to_user_list> -PasswordListPath <path_to_password_list> -OutputFilePath <output_csv_path>
+   ```
 
-4. **Review Results**: Once the script finishes running, you will find the results in the output CSV file specified.
+   Replace `<path_to_user_list>`, `<path_to_password_list>`, and `<output_csv_path>` with the respective paths on your system.
 
-## Parameters
-- `-ul`: Path to the usernames list file.
-- `-p`: Password to be tested.
-- `-o`: Path to the output CSV file.
+3. **Review the Output**: Once the script completes, review the generated CSV file to analyze the authentication results for each user-password combination.
 
-## Example
-```powershell
-.\password_spray.ps1 -ul "C:\Users\user\Documents\usernames.txt" -p "MyComplexPassword123" -o "C:\Users\user\Documents\output.csv"
-```
+## Arguments
+
+- **-UserListPath**: Path to the text file containing the list of usernames.
+- **-PasswordListPath**: Path to the text file containing the list of passwords.
+- **-OutputFilePath**: Path to the output CSV file where the results will be saved.
+
+## Output
+
+The script generates a CSV file containing the following columns:
+
+- **Username**: The username from the user list.
+- **Password**: The password from the password list.
+- **Status**: The authentication status, indicating whether the attempt was successful or failed.
+
