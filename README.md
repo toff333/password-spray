@@ -26,9 +26,9 @@ This PowerShell script allows you to perform password spraying against a domain 
 4. **Review Results**: Once the script finishes running, you will find the results in the output CSV file specified.
 
 ## Parameters
-- `-ul` or `--userListFilePath`: Path to the usernames list file.
-- `-p` or `--password`: Password to be tested.
-- `-o` or `--outputFilePath`: Path to the output CSV file.
+- `-ul`: Path to the usernames list file.
+- `-p`: Password to be tested.
+- `-o`: Path to the output CSV file.
 
 ## Example
 ```powershell
